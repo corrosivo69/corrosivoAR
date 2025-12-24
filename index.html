@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <title>Test AR – Cubo NFT</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
+
+  <!-- A-Frame -->
+  <script src="https://aframe.io/releases/1.4.0/aframe.min.js"></script>
+
+  <!-- AR.js NFT -->
+  <script src="https://cdn.jsdelivr.net/gh/AR-js-org/AR.js/aframe/build/aframe-ar-nft.js"></script>
+
+  <style>
+    body {
+      margin: 0;
+      background: #000;
+      overflow: hidden;
+      font-family: Arial, sans-serif;
+    }
+
+    #overlay {
+      position: fixed;
+      inset: 0;
+      background: #000;
+      color: #fff;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 10;
+    }
+
+    button {
+      padding: 1rem 2rem;
+      background: #111;
+      color: #fff;
+      border: 1px solid #333;
+      border-radius: 30px;
+      font-size: 1rem;
+      cursor: pointer;
+    }
+
+    #status {
+      position: fixed;
+      bottom: 20px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: rgba(0,0,0,0.6);
+      color: #ff6666;
+      padding: 0.5rem 1rem;
+      border-radius: 20px;
+      font-size: 0.9rem;
+      z-index: 20;
+    }
+
+    #status.found {
+      color: #66ffcc;
+    }
+  </style>
+</head>
+
+<body>
+
+<!-- OVERLAY -->
+<div id="overlay">
+  <button id="startBtn">Iniciar AR</button>
+</div>
+
+<div id="status">Marcador no encontrado</div>
+
+<!-- ESCENA AR -->
+<a-scene
+  embedded
+  vr-mode-ui="enabled: false"
+  renderer="logarithmicDepthBuffer: true;"
+  arjs="trackingMethod: best; sourceType: webcam; debugUIEnabled: false;"
+>
+
+  <!-- NFT TRACKER -->
+  
+<a-nft
+  id="tracker"
+  type="nft"
+  url="imagen-tracking/imagen"
+  smooth="true"
+  smoothCount="10"
+  smoothTolerance="0.01"
+  smoothThreshold="5"
+>
+
+  <!-- CONTENEDOR -->
+  <a-entity
+    rotation="-90 0 0"
+    scale="20 20 20"
+    position="0 0 0"
+  >
+
+    <!-- CUBO CIAN -->
+    <a-box
+      position="0 0.5 0"
+      depth="0.5"
+      height="0.5"
+      width="0.5"
+      color="#00ffff"
+    ></a-box>
+
+  </a-entity>
+
+</a-nft>
+
+
+  <a-entity camera></a-entity>
+</a-scene>
+
+<script>
+  const overlay = document.getElementById("overlay");
+  const startBtn = document.getElementById("startBtn");
+  const status = document.getElementById("status");
+  const tracker = document.getElementById("tracker");
+
+  startBtn.addEventListener("click", () => {
+    overlay.style.display = "none";
+  });
+
+  tracker.addEventListener("markerFound", () => {
+    console.log("MARCADOR ENCONTRADO");
+    status.textContent = "Marcador encontrado";
+    status.classList.add("found");
+  });
+
+  tracker.addEventListener("markerLost", () => {
+    console.log("MARCADOR PERDIDO");
+    status.textContent = "Marcador no encontrado";
+    status.classList.remove("found");
+  });
+</script>
+
+</body>
+</html>
